@@ -21,7 +21,8 @@
 
       // katalogas
       if (isset($_GET['path'])) {   // cia pasitikrinu kur esu
-        $directory = $_GET['path'];   // ar vidiniame? 
+        $directory = $_GET['path'];   // ar vidiniame?  $_SERVER['REQUEST_URI'] .  . "/". $_GET['path']
+        //echo $_SERVER['SCRIPT_FILENAME'] . "/" . $_GET['path'] ; // 
       } else {         //jei ne - tai esu teviniam 'plikam' kataloge
         $directory = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'];   // cia visas bendras motininis katalogas
       }
@@ -31,15 +32,21 @@
       $content = array_diff(scandir($directory), array('..', '.'));   // issivalau, kad rodytu svaru kelia be taskeliu
       //$directory = array_slice(scandir($directory), 2);
       //
-      // print_r($content);
+       //print_r($content);
     ?>
-    <button type="button" class="btn btn-outline-primary btn-md" onclick="goBack()">Back</button>
-
+    
     <script>
     function goBack() {
       window.history.back();
     }
     </script>
+
+    <?php                                 // bandymas trinti faila
+    //if (file_exists($value)) {
+        //unlink($value);
+        //echo "File:" . $value . "deleted.";
+    //}
+    ?>
 
   <table class="table table-striped table-hover">
   <thead style="background-color: lightpink; color:white;">
@@ -53,14 +60,15 @@
 
 <?php
     foreach ($content as $value) {
-    // echo $value . '<br>';
+     //echo $value . '<br>';
     if(is_file($value)) {
       echo (
         "
         <tr>
           <td><i class='bi bi-file-earmark-text'></i> File</td>
           <td>$value</td>
-          <td><button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button></td>
+          <td>
+          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button></td>
         </tr>
         "
       );
@@ -88,6 +96,30 @@
 ?>
   </tbody>
 </table>
+
+<?php if(isset($_POST['submit'])): ?>
+    <?php $name = $_POST['name']; ?>
+    <?php mkdir($name); ?>
+    Catalog: <?php echo $name; ?> is created.
+<?php endif; ?>
+
+<div class="container">
+    <div class="row">
+        <div class="col-1">
+            <button type="button" class="btn btn-outline-primary btn-md" onclick="goBack()">Back</button>
+        </div>
+    
+        <div class="col-3">
+        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">    
+            <input type="name" name="name" class="form-control" id="name" placeholder="New directory name">
+        </div>
+        <div class="col-2">
+            <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+        </div>
+        </form>
+    
+    </div>
+</div>
 
     <!-- Optional JavaScript; choose one of the two! -->
 
