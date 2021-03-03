@@ -41,7 +41,7 @@
     }
     </script>
 
-    <?php                                 // bandymas trinti faila
+    <?php                          // bandymas trinti faila
     //if (file_exists($value)) {
         //unlink($value);
         //echo "File:" . $value . "deleted.";
@@ -68,16 +68,19 @@
           <td><i class='bi bi-file-earmark-text'></i> File</td>
           <td>$value</td>
           <td>
-          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button></td>
+          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button> <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-file-earmark-arrow-down'></i></button></td>
         </tr>
         "
       );
     } else if(is_dir($value)) {    // nuoroda naudoja path kintamaji, kuris pakeicia direktorijos reiksme. 
-      echo ("
+      echo (
+        "
       <tr>
       <td><i class='bi bi-folder'></i> Directory</td>
       <td><a href='?path=$value'>$value</a></td> 
-      <td></td>
+      <td>
+          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-file-earmark-arrow-down'></i></button></td>
+      </td>
       </tr>
      " 
     );
@@ -117,6 +120,21 @@
             <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </div>
         </form>
+        <br>
+        <br>
+
+    <div class="input-group mb-3">
+         <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupFile02">
+      <!-- <label class="custom-file-label" for="inputGroupFile02">Choose file</label>  -->
+          </div>
+          <div class="input-group-append">
+          <form action="<?php echo $_['']; ?>" method="post">  
+      <span class="input-group-text" id="">Upload</span>
+      </div>
+          </form>
+</div>
+    
     
     </div>
 </div>
