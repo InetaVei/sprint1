@@ -1,0 +1,136 @@
+<?php
+
+      //$_SERVER['DOCUMENT_ROOT'] === 'C:/Program Files/Ampps/www';    cia matom kur yra visa to serverio pradzia
+      //$_SERVER['REQUEST_URI'] === /uzduotis/   cia matom kuris katalogas
+      // C:/Program Files/Ampps/www/uzduotis/
+
+      // katalogas
+      if (isset($_GET['path'])) {   // cia pasitikrinu kur esu
+        $directory = $_GET['path'];   // ar vidiniame?  $_SERVER['REQUEST_URI'] .  . "/". $_GET['path']
+        //echo $_SERVER['SCRIPT_FILENAME'] . "/" . $_GET['path'] ; // 
+      } else {         //jei ne - tai esu teviniam 'plikam' kataloge
+        $directory = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'];   // cia visas bendras motininis katalogas
+      }
+     
+      //$content = scandir($directory);
+      //echo $directory;                   content - tai pagrindinis failu masyvas (sarasas objektu)
+      $content = array_diff(scandir($directory), array('..', '.'));   // issivalau, kad rodytu svaru kelia be taskeliu
+      //$directory = array_slice(scandir($directory), 2);
+      //
+       //print_r($content);
+    ?>
+
+
+<?php
+    foreach ($content as $value) {
+     //echo $value . '<br>';
+    if(is_file($value)) {
+      echo (
+        "
+        <tr>
+          <td><i class='bi bi-file-earmark-text'></i> File</td>
+          <td>$value</td>
+          <td>
+          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button> <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-file-earmark-arrow-down'></i></button></td>
+        </tr>
+        "
+      );
+    } else if(is_dir($value)) {    // nuoroda naudoja path kintamaji, kuris pakeicia direktorijos reiksme. 
+      echo (
+        "
+      <tr>
+      <td><i class='bi bi-folder'></i> Directory</td>
+      <td><a href='?path=$value'>$value</a></td> 
+      <td>
+          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-file-earmark-arrow-down'></i></button></td>
+      </td>
+      </tr>
+     " 
+    );
+    } else {      // tiesiog kazkas 
+      echo (
+        "
+        <tr>
+          <td>File</td>
+          <td>$value</td>
+          <td><button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button></td>
+        </tr>
+        "
+      );
+    }
+  }
+?>
+
+
+
+    <table class="table table-striped table-hover">
+    <thead style="background-color: lightpink; color:white;">
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Name</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php
+      error_reporting(E_ALL ^ E_DEPRECATED ^ E_WARNING);
+
+
+      //require ("kint/Kint.class.php");
+
+      global $dir_path;
+      if (isset($_GET["directory"])) {
+          $dir_path = $_GET["directory"];
+          //echo $dir_path;
+      }
+      else {
+          $dir_path = $_SERVER["DOCUMENT_ROOT"]."/";
+      }
+      $directories = array_diff(scandir($dir_path), array('..', '.'));    
+      ?>
+      <?php if($directories != false): ?>
+      <?php foreach($directories as $entry): ?>
+        <?php if (is_dir($dir_path . "/" . $entry) && !in_array($entry, array('.','..'))) : ?>
+          <tr>
+            <td><i class='bi bi-folder'></i> Directory</td>
+            <td><?php echo "<a href=?directory=" . $dir_path . "" . $entry . "/" . ">" . $entry . "</a>"; ?></td> 
+            <td></td>
+          </tr>     
+        <?php else: ?>
+          <tr>
+            <td><i class='bi bi-file-earmark-text'></i> File</td>
+            <td><?php echo $entry; ?></td>
+            <td>
+              <a href="?delete=<?php echo $dir_path . $entry; ?>"
+              class="btn btn-outline-danger btn-sm"
+              >
+                <i class='bi bi-trash'></i>
+              </a>
+
+              <a href="<?php echo $entry; ?>" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i></a>
+
+            </td>
+          </tr>
+        <?php endif; ?>
+      <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+            <td></td>
+            <td>Catalog empty</td>
+            <td></td>
+          </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+
+
+  <?php
+      $dir_contents = scandir('./');
+        foreach($dir_contents as $content){
+        if(is_file($content)){
+          print('<form action="?path=' . $content . '" method="POST">');
+          print('<input type="submit" name="download" value="' . $content . '"/>');
+          print('</form>');
+ }
+ }
+ ?>

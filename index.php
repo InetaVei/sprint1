@@ -12,106 +12,140 @@
     <title>Sprint1</title>
   </head>
   <body>
-    <h1>Directory contents: <?php echo $_SERVER['REQUEST_URI']; ?></h1>
-    <?php
-
-      //$_SERVER['DOCUMENT_ROOT'] === 'C:/Program Files/Ampps/www';    cia matom kur yra visa to serverio pradzia
-      //$_SERVER['REQUEST_URI'] === /uzduotis/   cia matom kuris katalogas
-      // C:/Program Files/Ampps/www/uzduotis/
-
-      // katalogas
-      if (isset($_GET['path'])) {   // cia pasitikrinu kur esu
-        $directory = $_GET['path'];   // ar vidiniame?  $_SERVER['REQUEST_URI'] .  . "/". $_GET['path']
-        //echo $_SERVER['SCRIPT_FILENAME'] . "/" . $_GET['path'] ; // 
-      } else {         //jei ne - tai esu teviniam 'plikam' kataloge
-        $directory = $_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'];   // cia visas bendras motininis katalogas
-      }
-     
-      //$content = scandir($directory);
-      //echo $directory;                   content - tai pagrindinis failu masyvas (sarasas objektu)
-      $content = array_diff(scandir($directory), array('..', '.'));   // issivalau, kad rodytu svaru kelia be taskeliu
-      //$directory = array_slice(scandir($directory), 2);
-      //
-       //print_r($content);
-    ?>
-    
-    <script>
-    function goBack() {
-      window.history.back();
-    }
-    </script>
-
-    <?php                          // bandymas trinti faila
-    //if (file_exists($value)) {
-        //unlink($value);
-        //echo "File:" . $value . "deleted.";
-    //}
-    ?>
-
-  <table class="table table-striped table-hover">
-  <thead style="background-color: lightpink; color:white;">
-    <tr>
-      <th scope="col">Type</th>
-      <th scope="col">Name</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-
-<?php
-    foreach ($content as $value) {
-     //echo $value . '<br>';
-    if(is_file($value)) {
-      echo (
-        "
-        <tr>
-          <td><i class='bi bi-file-earmark-text'></i> File</td>
-          <td>$value</td>
-          <td>
-          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button> <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-file-earmark-arrow-down'></i></button></td>
-        </tr>
-        "
-      );
-    } else if(is_dir($value)) {    // nuoroda naudoja path kintamaji, kuris pakeicia direktorijos reiksme. 
-      echo (
-        "
-      <tr>
-      <td><i class='bi bi-folder'></i> Directory</td>
-      <td><a href='?path=$value'>$value</a></td> 
-      <td>
-          <button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-file-earmark-arrow-down'></i></button></td>
-      </td>
-      </tr>
-     " 
-    );
-    } else {      // tiesiog kazkas 
-      echo (
-        "
-        <tr>
-          <td>File</td>
-          <td>$value</td>
-          <td><button type='button' class='btn btn-outline-danger btn-sm'><i class='bi bi-trash'></i></button></td>
-        </tr>
-        "
-      );
-    }
-  }
-?>
-  </tbody>
-</table>
-
-<?php if(isset($_POST['submit'])): ?>
-    <?php $name = $_POST['name']; ?>
-    <?php mkdir($name); ?>
-    Catalog: <?php echo $name; ?> is created.
-<?php endif; ?>
 
 <div class="container">
+  <div class="row">
+    <div class="col-12">
+      <form>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+    <h1>Directory contents: <?php echo $_SERVER['REQUEST_URI']; ?></h1>
+
+    <?php if(isset($_POST['submit'])):  // cia kuriamas katalogas ?>     
+      <?php $name = $_POST['name']; ?>
+      <?php mkdir($name); ?>
+    <?php endif; ?>
+
+    <?php if(isset($_GET['delete'])):   // cia daromas failo trinimas ?>
+        <?php unlink($_GET['delete']); ?>
+    <?php endif; ?>
+
+    <?php
+      if(isset($_GET['download'])) {
+        // print('Path to download: '.'./'. $_POST['download']);     // ar reikia $_GET["path"] ???
+        $file = './' . $_GET['download'];
+        $fileToDownloadEscaped = str_replace("&nbsp;", " ", htmlentities($file, null, 'uft-8'));
+        ob_clean();
+        ob_start();
+        header('Content-Description: File Tra');
+        header('Content-Type:' . mime_content_type($fileToDownloadEscaped));
+        header('Content-Disposition: attachment; filename=' . basename($fileToDownloadEscaped));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, prie-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($fileToDownloadEscaped));
+        ob_end_flush();
+        readfile($fileToDownloadEscaped);
+        exit;
+      }
+    ?>
+
+    <?php
+      if(isset($_FILES['image'])) {
+        $errors= array();
+        $file_name = $_FILES['image']['name'];
+        $file_size = $_FILES['image']['size'];
+        $file_tmp = $_FILES['image']['tmp_name'];  //laikinas [temporary]
+        $file_type = $_FILES['image']['type'];
+
+        $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
+        $extensions = array("jpeg","jpg","png");
+        if(in_array($file_ext, $extensions) === false) {
+          $errors[]= 'extension not allowed, please choose a JPEG or PNG file';   // KAZKAIP GALIU SU FOR ISPRINTINTI GRAZIAI
+        }
+        if($file_size > 2097152) {
+          $errors[] = 'File size must be smaller than 2 MB';
+        }
+        if(empty($errors) == true) {
+          move_uploaded_file($file_tmp, "./" . $path .  $file_name);   // per cia vyksta failu aploudinimas
+          // echo "Success";
+        } else {
+          print_r($errors);
+        }
+      }
+    ?>
+
+    <?php
+    global $dir_path;
+
+    if (isset($_GET["directory"])) {
+        $dir_path = $_GET["directory"];
+        //echo $dir_path;
+    }
+    else {
+        $dir_path = $_SERVER["DOCUMENT_ROOT"]."/sprint1/";    // nurodomas kur yra serveris - pagrindinis katalogas
+    }
+    $directories = array_diff(scandir($dir_path), array('..', '.'));    // naudojame scandir bet su array_diff nuimame taskiukus
+    ?>
+    <table class="table table-striped table-hover">
+      <thead style="background-color: lightpink; color:white;">
+        <tr>
+          <th scope="col">Type</th>
+          <th scope="col">Name</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($directories as $entry): ?>
+          <?php if (is_dir($dir_path . "/" . $entry)) : // su pilnu keliu tikrinama ar sis irasas tai kategorija ?>   
+            <tr>
+              <td><i class='bi bi-folder'></i> Directory</td>
+              <td>
+                <a href="?directory=<?php echo "" . $dir_path . "" . $entry . "/" ?>">
+                  <?php echo $entry; ?>
+                </a>
+              </td> 
+              <td></td>
+            </tr>     
+          <?php else: ?>
+            <tr>
+              <td><i class='bi bi-file-earmark-text'></i> File</td>
+              <td><?php echo $entry; ?></td>
+              <td>
+                <a href="?delete=<?php echo $dir_path . $entry; ?>" class="btn btn-outline-danger btn-sm"><i class='bi bi-trash'></i></a>
+                <a href="?download=<?php echo $entry; ?>" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i></a>
+              </td>
+            </tr>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      </tbody>
+  </table>
+
+<div class="container-fluid">
     <div class="row">
         <div class="col-1">
             <button type="button" class="btn btn-outline-primary btn-md" onclick="goBack()">Back</button>
-        </div>
-    
+            <script>
+            function goBack() {
+              window.history.back();
+            }
+            </script>
+        </div>    
         <div class="col-3">
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">    
             <input type="name" name="name" class="form-control" id="name" placeholder="New directory name">
@@ -120,25 +154,19 @@
             <button type="submit" name="submit" class="btn btn-primary">Submit</button>
         </div>
         </form>
-        <br>
-        <br>
-
-    <div class="input-group mb-3">
-         <div class="custom-file">
-            <input type="file" class="custom-file-input" id="inputGroupFile02">
-      <!-- <label class="custom-file-label" for="inputGroupFile02">Choose file</label>  -->
-          </div>
-          <div class="input-group-append">
-          <form action="<?php echo $_['']; ?>" method="post">  
-      <span class="input-group-text" id="">Upload</span>
-      </div>
+        <div class="col-6">
+          <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data" class="row g-2">
+            <div class="col-auto"><input class="form-control" type="file" id="formFile" name="image"></div>
+            <div class="col-auto"><button type="submit" name="submit" class="btn btn-primary">Upload</button></div>
           </form>
-</div>
-    
-    
-    </div>
-</div>
+        </div>
+        <br>
+        <br>
 
+    </div>
+  </div>
+
+  
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
