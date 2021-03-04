@@ -6,7 +6,7 @@
 This project is for my educational purposes.
 
 Change project catalog in localhost if it is different:
-`132: $projectCatalog = "sprint1";`
+`128: $projectCatalog = "sprint1";`
 
 
 ## Project features
