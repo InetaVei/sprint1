@@ -5,6 +5,9 @@
 
 This project is for my educational purposes.
 
+Change project catalog in localhost if it is different:
+`132: $projectCatalog = "sprint1";`
+
 
 ## Project features
 - possibility to see files and/or directories;
@@ -13,7 +16,7 @@ This project is for my educational purposes.
 - possibility to delete files;
 - possibility to upload files;
 - possibility to download files;
-- the application is protected by an authentication mechanism( Login/Logout);
+- the application is protected by an authentication mechanism(Login/Logout);
 
 
 ## Authors
