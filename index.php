@@ -69,12 +69,12 @@
       <div class="col-12">
       <h1>Directory contents: <?php echo $_SERVER['REQUEST_URI']; ?></h1>
 
-      <?php if(isset($_POST['submit'])):  // cia kuriamas katalogas ?>     
+      <?php if(isset($_POST['submit'])): ?>     
         <?php $name = $_POST['name']; ?>
         <?php if($name == true): mkdir($name); endif;?>
       <?php endif; ?>
 
-      <?php if(isset($_GET['delete'])):   // cia daromas failo tikrinimas ?>
+      <?php if(isset($_GET['delete'])): ?>
           <?php unlink($_GET['delete']); ?>
       <?php endif; ?>
 
@@ -103,7 +103,7 @@
           $errors= array();
           $file_name = $_FILES['image']['name'];
           $file_size = $_FILES['image']['size'];
-          $file_tmp = $_FILES['image']['tmp_name'];  //laikinas [temporary]
+          $file_tmp = $_FILES['image']['tmp_name']; 
           $file_type = $_FILES['image']['type'];
 
           $file_ext = strtolower(end(explode('.', $_FILES['image']['name'])));
@@ -115,7 +115,7 @@
             $errors[] = 'File size must be smaller than 2 MB';
           }
           if(empty($errors) == true) {
-            move_uploaded_file($file_tmp, "./" . $path .  $file_name);   // per cia vyksta failu uploudinimas
+            move_uploaded_file($file_tmp, "./" . $path .  $file_name);
           } else {
             echo '<div class="alert alert-danger" role="alert">' . $errors[0] . '</div>';
           }
@@ -131,9 +131,9 @@
           $dir_path = $_GET["directory"];
       }
       else {
-          $dir_path = $_SERVER["DOCUMENT_ROOT"]. "/" . $projectCatalog . "/";    // nurodomas kur yra serveris - pagrindinis katalogas
+          $dir_path = $_SERVER["DOCUMENT_ROOT"]. "/" . $projectCatalog . "/"; 
       }
-      $directories = array_diff(scandir($dir_path), array('..', '.'));    // naudojame scandir bet su array_diff nuimame taskiukus
+      $directories = array_diff(scandir($dir_path), array('..', '.')); 
       ?>
       <table class="table table-striped table-hover">
         <thead style="background-color: lightpink; color:white;">
