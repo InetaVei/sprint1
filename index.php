@@ -1,3 +1,15 @@
+<?php 
+    session_start();
+    // logout logic
+    if(isset($_GET['action']) and $_GET['action'] == 'logout'){
+        session_start();
+        unset($_SESSION['username']);
+        unset($_SESSION['password']);
+        unset($_SESSION['logged_in']);
+        // print('Logged out!');
+    }
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -12,20 +24,43 @@
     <title>Sprint1</title>
   </head>
   <body>
+  <h2>Login</h2> 
+      <div>
+         <?php
+            $msg = '';
+            if (isset($_POST['login']) 
+                && !empty($_POST['username']) 
+                && !empty($_POST['password'])
+            ) { 
+               if ($_POST['username'] == 'Vardas' && 
+                  $_POST['password'] == '12345'
+                ) {
+                  $_SESSION['logged_in'] = true;
+                  $_SESSION['timeout'] = time();
+                  $_SESSION['username'] = 'Vardas';
+                  echo 'You have entered valid use name and password';
+               } else {
+                  $msg = 'Wrong username or password';
+               }
+            }
+         ?>
+      </div>
+      <div>
+        <?php 
+            if($_SESSION['logged_in'] == true){
+               print('<h1>You can only see this if you are logged in!</h1>');
+            }
+        ?>
+        <form action="./index.php" method="post">
+            <h4><?php echo $msg; ?></h4>
+            <div class="col-3 mb-3 ">
+          <input type="text" name="username" class="form-control" id="exampleInputPassword1" placeholder="Your name? = Vardas" required autofocus>
+            </div>
+            <div class="col-3 mb-3 ">
+          <input type="password" name="username" class="form-control" id="exampleInputPassword1" placeholder="Password = 12345" required>
+            </div>
+            <button type="submit" name="login" class="btn btn-primary">Login</button>
 
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <form>
-        <div class="mb-3">
-          <label for="exampleInputPassword1" class="form-label">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
-  </div>
-</div>
 
     <h1>Directory contents: <?php echo $_SERVER['REQUEST_URI']; ?></h1>
 
@@ -157,11 +192,13 @@
         <br>
         <br>
         <br>
-        <br>
-
     </div>
   </div>
-
+  </form>
+        Click here to <a href = "index.php?action=logout"> logout
+      </form>
+      <br>
+      <br>
   
     <!-- Optional JavaScript; choose one of the two! -->
 
