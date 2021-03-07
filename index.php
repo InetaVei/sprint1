@@ -69,13 +69,14 @@
       <div class="col-12">
       <h1>Directory contents: <?php echo $_SERVER['REQUEST_URI']; ?></h1>
 
-      <?php if(isset($_POST['submit'])): ?>     
+      <?php if(isset($_POST['submit']) && $_POST['name'] != ''): ?>     
         <?php $name = $_POST['name']; ?>
         <?php if($name == true): mkdir($name); endif;?>
       <?php endif; ?>
 
-      <?php if(isset($_GET['delete'])): ?>
-          <?php unlink($_GET['delete']); ?>
+      <?php if(isset($_POST['submit']) && $_POST['delefile'] != ''): ?>
+          <?php $file = $_POST['delefile']; ?>
+          <?php unlink($file); ?>
       <?php endif; ?>
 
       <?php
@@ -125,7 +126,7 @@
       <?php
       global $dir_path;
 
-      $projectCatalog = "sprint1";
+      $projectCatalog = str_replace('/index.php', '', $_SERVER["REQUEST_URI"]);
 
       if (isset($_GET["directory"])) {
           $dir_path = $_GET["directory"];
@@ -160,8 +161,13 @@
                 <td><i class='bi bi-file-earmark-text'></i> File</td>
                 <td><?php echo $entry; ?></td>
                 <td>
-                  <a href="?delete=<?php echo $dir_path . $entry; ?>" class="btn btn-outline-danger btn-sm"><i class='bi bi-trash'></i></a>
-                  <a href="?download=<?php echo $entry; ?>" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+                    <input type="hidden" name="delefile" value="<?php echo $dir_path . $entry; ?>">
+                    <button type="submit" name="submit" class="btn btn-outline-danger btn-sm" value="<?php echo $dir_path . $entry; ?>">
+                      <i class='bi bi-trash'></i>
+                    </button>
+                    <a href="?download=<?php echo $entry; ?>" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-arrow-down"></i></a>
+                  </form>
                 </td>
               </tr>
             <?php endif; ?>
