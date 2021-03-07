@@ -5,9 +5,6 @@
 
 This project is for my educational purposes.
 
-Change project catalog in localhost if it is different:
-`128: $projectCatalog = "sprint1";`
-
 
 ## Project features
 - possibility to see files and/or directories;
