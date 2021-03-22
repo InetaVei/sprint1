@@ -15,6 +15,8 @@ This project is for my educational purposes.
 - possibility to download files;
 - the application is protected by an authentication mechanism(Login/Logout);
 
+## How does it looks like
+<img width="816" alt="foto1" src="https://user-images.githubusercontent.com/74532995/111992853-9204cd00-8b1e-11eb-8f57-7387bef7fd9d.png">
 
 ## Authors
 [Ineta](https://github.com/InetaVei)
