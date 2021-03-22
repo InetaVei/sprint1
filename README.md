@@ -16,7 +16,7 @@ This project is for my educational purposes.
 - the application is protected by an authentication mechanism(Login/Logout);
 
 ## How does it looks like
-
+<img width="825" alt="sprint1" src="https://user-images.githubusercontent.com/74532995/111993357-3555e200-8b1f-11eb-8306-a76bb3ce2368.png">
 
 ## Authors
 [Ineta](https://github.com/InetaVei)
